@@ -2,27 +2,29 @@ REVOADA CITY - CELULAR V1.0.0
 ================================
 
 O QUE ESTA VERSAO FAZ
-- Abre diretamente na tela inicial ao pressionar F1.
-- Remove a tela de bloqueio/desbloqueio.
-- Identidade visual Revoada City em roxo e grafite.
-- Mantem o som de abertura e fechamento.
-- Mantem a animacao do personagem segurando o telefone.
-- Mantem o objeto do celular preso a mao (bone_attach, quando disponivel).
-- Os aplicativos ficam apenas como icones decorativos e nao executam funcoes.
-- A tela so e desenhada enquanto o celular esta aberto.
-- Nao usa consultas SQL, chamadas externas, notificacoes ou timers de aplicativos.
+- F1 abre diretamente a tela inicial, sem tela de bloqueio ou desbloqueio.
+- Visual REVOADA CITY em roxo e grafite.
+- Mantem as animacoes do personagem segurando e guardando o celular.
+- Mantem os sons originais de abertura e fechamento.
+- Os icones dos aplicativos sao apenas visuais; nao executam funcoes.
+- A tela e desenhada somente enquanto o celular esta aberto.
+- Remove banco de dados, consultas SQL, apps funcionais, chamadas externas e notificacoes.
 
 INSTALACAO
-1. Coloque a pasta da resource em resources.
-2. Garanta que a resource bone_attach esteja iniciada para prender o telefone na mao.
-3. Execute:
+1. Baixe o ZIP desta branch e extraia.
+2. Renomeie a pasta extraida para: revoada_celular
+3. Coloque a pasta em resources.
+4. Para posicionar o telefone na mao com precisao, mantenha bone_attach iniciado.
+5. No console do servidor, execute:
    refresh
    start revoada_celular
 
 CONTROLES
-- F1: abrir/fechar o celular.
+- F1: abrir ou fechar o celular.
 - ESC: fechar o celular.
 
-OBSERVACAO
-Sem bone_attach, o script usa attachElements como alternativa; o objeto continuara visivel,
-mas a posicao na mao pode nao ficar tao precisa.
+DESEMPENHO
+- Nenhum onClientRender fica ativo enquanto o celular esta fechado.
+- Texturas e fonte sao carregadas uma vez e destruidas ao parar a resource.
+- Um timer de 500 ms fica ativo apenas enquanto o telefone esta aberto para manter a pose da animacao phone_in.
+- Nao ha loops permanentes, banco de dados ou timers de aplicativos.
