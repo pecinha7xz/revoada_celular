@@ -1,0 +1,28 @@
+REVOADA CITY - CELULAR V1.0.0
+================================
+
+O QUE ESTA VERSAO FAZ
+- Abre diretamente na tela inicial ao pressionar F1.
+- Remove a tela de bloqueio/desbloqueio.
+- Identidade visual Revoada City em roxo e grafite.
+- Mantem o som de abertura e fechamento.
+- Mantem a animacao do personagem segurando o telefone.
+- Mantem o objeto do celular preso a mao (bone_attach, quando disponivel).
+- Os aplicativos ficam apenas como icones decorativos e nao executam funcoes.
+- A tela so e desenhada enquanto o celular esta aberto.
+- Nao usa consultas SQL, chamadas externas, notificacoes ou timers de aplicativos.
+
+INSTALACAO
+1. Coloque a pasta da resource em resources.
+2. Garanta que a resource bone_attach esteja iniciada para prender o telefone na mao.
+3. Execute:
+   refresh
+   start revoada_celular
+
+CONTROLES
+- F1: abrir/fechar o celular.
+- ESC: fechar o celular.
+
+OBSERVACAO
+Sem bone_attach, o script usa attachElements como alternativa; o objeto continuara visivel,
+mas a posicao na mao pode nao ficar tao precisa.
