@@ -19,7 +19,8 @@ local phone = {
     active = false,
     closing = false,
     started = 0,
-    closeTimer = nil
+    closeTimer = nil,
+    renderAttached = false
 }
 
 local baseTexture = dxCreateTexture("Files/Imagens/Base.png", "argb", true, "clamp")
@@ -95,7 +96,7 @@ local function drawStatus(alpha, offset)
     local hour, minute = getTime()
     local timeText = string.format("%02d:%02d", hour or 12, minute or 0)
 
-    dxDrawText(timeText, px(1105), py(246 + offset), px(1165), py(265),
+    dxDrawText(timeText, px(1105), py(246 + offset), px(1165), py(265 + offset),
         tocolor(245, 242, 250, alpha), 1, phoneFont, "left", "center", false, false, false, false, false)
 
     dxDrawText("REVOADA", px(1220), py(246), px(1288), py(265),
@@ -103,7 +104,7 @@ local function drawStatus(alpha, offset)
 
     dxDrawRectangle(px(1292), py(252 + offset), sz(17), sz(8), tocolor(235, 230, 245, alpha * 0.75), false)
     dxDrawRectangle(px(1294), py(254 + offset), sz(12), sz(4), tocolor(160, 32, 240, alpha), false)
-    dxDrawRectangle(px(1309), py(254), sz(2), sz(4), tocolor(235, 230, 245, alpha * 0.75), false)
+    dxDrawRectangle(px(1309), py(254 + offset), sz(2), sz(4), tocolor(235, 230, 245, alpha * 0.75), false)
 end
 
 local function drawApps(alpha, offset)
@@ -123,7 +124,7 @@ local function drawApps(alpha, offset)
                 app.texture, 0, 0, 0, tocolor(255, 255, 255, alpha), false)
         end
 
-        dxDrawText(app[1], px(iconX - 7), py(iconY + 40 + offset), px(iconX + 43), py(iconY + 55),
+        dxDrawText(app[1], px(iconX - 7), py(iconY + 40 + offset), px(iconX + 43), py(iconY + 55 + offset),
             tocolor(240, 236, 248, alpha), 1, phoneFont, "center", "top", false, false, false, false, false)
     end
 
@@ -181,6 +182,7 @@ local function finishClose()
     phone.active = false
     phone.closing = false
     removeEventHandler("onClientRender", root, renderPhone)
+    phone.renderAttached = false
     showCursor(false)
 end
 
@@ -217,8 +219,9 @@ addEventHandler("RevoadaCelular:open", resourceRoot,
         phone.closing = false
         phone.started = getTickCount()
 
-        if not isEventHandlerAdded or not isEventHandlerAdded("onClientRender", root, renderPhone) then
+        if not phone.renderAttached then
             addEventHandler("onClientRender", root, renderPhone)
+            phone.renderAttached = true
         end
 
         showCursor(false)
