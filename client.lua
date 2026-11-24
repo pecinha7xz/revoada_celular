@@ -23,7 +23,8 @@ local phone = {
 }
 
 local baseTexture = dxCreateTexture("Files/Imagens/Base.png", "argb", true, "clamp")
-local phoneFont = dxCreateFont("Files/font.ttf", math.max(8, math.floor(10 * scale)), false, "cleartype") or "default-bold"
+local phoneFontElement = dxCreateFont("Files/font.ttf", math.max(8, math.floor(10 * scale)), false, "cleartype")
+local phoneFont = phoneFontElement or "default-bold"
 
 local wallpaperSVG
 if type(svgCreate) == "function" then
@@ -90,22 +91,22 @@ local dockIcons = {
     dxCreateTexture("Files/Imagens/Icons/contatos.png", "argb", true, "clamp")
 }
 
-local function drawStatus(alpha)
+local function drawStatus(alpha, offset)
     local hour, minute = getTime()
     local timeText = string.format("%02d:%02d", hour or 12, minute or 0)
 
-    dxDrawText(timeText, px(1105), py(246), px(1165), py(265),
+    dxDrawText(timeText, px(1105), py(246 + offset), px(1165), py(265),
         tocolor(245, 242, 250, alpha), 1, phoneFont, "left", "center", false, false, false, false, false)
 
     dxDrawText("REVOADA", px(1220), py(246), px(1288), py(265),
         tocolor(214, 190, 238, alpha), 1, phoneFont, "right", "center", false, false, false, false, false)
 
-    dxDrawRectangle(px(1292), py(252), sz(17), sz(8), tocolor(235, 230, 245, alpha * 0.75), false)
-    dxDrawRectangle(px(1294), py(254), sz(12), sz(4), tocolor(160, 32, 240, alpha), false)
+    dxDrawRectangle(px(1292), py(252 + offset), sz(17), sz(8), tocolor(235, 230, 245, alpha * 0.75), false)
+    dxDrawRectangle(px(1294), py(254 + offset), sz(12), sz(4), tocolor(160, 32, 240, alpha), false)
     dxDrawRectangle(px(1309), py(254), sz(2), sz(4), tocolor(235, 230, 245, alpha * 0.75), false)
 end
 
-local function drawApps(alpha)
+local function drawApps(alpha, offset)
     for index, app in ipairs(apps) do
         local column = (index - 1) % 4
         local line = math.floor((index - 1) / 4)
@@ -114,25 +115,25 @@ local function drawApps(alpha)
         local iconY = 365 + line * 88
         local iconSize = 36
 
-        dxDrawRectangle(px(iconX - 4), py(iconY - 4), sz(44), sz(44),
+        dxDrawRectangle(px(iconX - 4), py(iconY - 4 + offset), sz(44), sz(44),
             tocolor(160, 32, 240, alpha * 0.16), false)
 
         if app.texture and isElement(app.texture) then
-            dxDrawImage(px(iconX), py(iconY), sz(iconSize), sz(iconSize),
+            dxDrawImage(px(iconX), py(iconY + offset), sz(iconSize), sz(iconSize),
                 app.texture, 0, 0, 0, tocolor(255, 255, 255, alpha), false)
         end
 
-        dxDrawText(app[1], px(iconX - 7), py(iconY + 40), px(iconX + 43), py(iconY + 55),
+        dxDrawText(app[1], px(iconX - 7), py(iconY + 40 + offset), px(iconX + 43), py(iconY + 55),
             tocolor(240, 236, 248, alpha), 1, phoneFont, "center", "top", false, false, false, false, false)
     end
 
-    dxDrawRectangle(px(1104), py(654), sz(198), sz(62),
+    dxDrawRectangle(px(1104), py(654 + offset), sz(198), sz(62),
         tocolor(10, 8, 18, alpha * 0.84), false)
 
     for index, texture in ipairs(dockIcons) do
         local iconX = 1120 + (index - 1) * 61
         if texture and isElement(texture) then
-            dxDrawImage(px(iconX), py(665), sz(39), sz(39),
+            dxDrawImage(px(iconX), py(665 + offset), sz(39), sz(39),
                 texture, 0, 0, 0, tocolor(255, 255, 255, alpha), false)
         end
     end
@@ -167,8 +168,8 @@ local function renderPhone()
             tocolor(160, 32, 240, alpha), 1.2, phoneFont, "center", "center", false, false, false, false, false)
     end
 
-    drawStatus(alpha)
-    drawApps(alpha)
+    drawStatus(alpha, offset)
+    drawApps(alpha, offset)
 end
 
 local function finishClose()
@@ -212,14 +213,16 @@ addEventHandler("RevoadaCelular:open", resourceRoot,
             killTimer(phone.closeTimer)
         end
 
-        if not phone.active then
-            phone.active = true
-            phone.closing = false
-            phone.started = getTickCount()
+        phone.active = true
+        phone.closing = false
+        phone.started = getTickCount()
+
+        if not isEventHandlerAdded or not isEventHandlerAdded("onClientRender", root, renderPhone) then
             addEventHandler("onClientRender", root, renderPhone)
-            showCursor(false)
-            playSound("Files/Sons/abrindo_celular.mp3", false)
         end
+
+        showCursor(false)
+        playSound("Files/Sons/abrindo_celular.mp3", false)
     end
 )
 
@@ -265,8 +268,8 @@ addEventHandler("onClientResourceStop", resourceRoot,
             destroyElement(wallpaperSVG)
         end
 
-        if isElement(phoneFont) then
-            destroyElement(phoneFont)
+        if phoneFontElement and isElement(phoneFontElement) then
+            destroyElement(phoneFontElement)
         end
 
         for _, app in ipairs(apps) do
